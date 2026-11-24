@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0E3B3A">
+  <title>One of Us Is Lying</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main id="app">
+
+    <!-- HOME -->
+    <section id="home" class="screen active" aria-labelledby="homeTitle">
+      <div class="col">
+        <div class="fan" aria-hidden="true">
+          <div class="pcard back f1"></div>
+          <div class="pcard back f2"></div>
+          <div class="pcard liar f3"><span class="corner">?</span><span class="corner br">?</span></div>
+        </div>
+        <h1 id="homeTitle" class="title">One of us<br>is lying.</h1>
+        <p class="lede">Everyone gets the same secret, except one player who gets nothing. Talk, bluff, and vote out the one who's faking it.</p>
+
+        <div class="panel form">
+          <label class="field">
+            <span>Your name</span>
+            <input id="nameInput" maxlength="18" placeholder="e.g. Adi" autocomplete="off" enterkeyhint="go">
+          </label>
+          <button id="createBtn" class="btn primary">Create a room</button>
+          <div class="or"><span>or join a friend</span></div>
+          <div class="join-row">
+            <input id="codeInput" maxlength="6" placeholder="Room code" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Room code">
+            <button id="joinBtn" class="btn">Join</button>
+          </div>
+          <p class="error" id="homeError" role="alert"></p>
+        </div>
+        <p class="foot">For 3 to 8 players sitting in the same room, each on their own phone.</p>
+      </div>
+    </section>
+
+    <!-- LOBBY -->
+    <section id="lobby" class="screen">
+      <header class="bar"><span class="mark">One of us is lying</span><span id="roomBadge" class="pill"></span></header>
+      <div class="col">
+        <p class="kicker">Room code</p>
+        <div id="bigCode" class="code-tiles" aria-live="polite"></div>
+        <button id="shareBtn" class="btn ghost small">Share invite link</button>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>At the table</h2>
+            <span id="playerCount" class="count"></span>
+          </div>
+          <div id="playerList" class="seats"></div>
+        </div>
+
+        <button id="startBtn" class="btn primary">Deal the first round</button>
+        <p id="lobbyHint" class="hint"></p>
+      </div>
+    </section>
+
+    <!-- ROUND -->
+    <section id="round" class="screen">
+      <header class="bar"><span class="mark">Round <b id="roundNo"></b> of <b id="roundTotal"></b></span><span id="roleBadge" class="pill"></span></header>
+      <div class="col">
+        <button id="secretCard" class="secret" aria-label="Press and hold to see your card">
+          <span class="secret-inner">
+            <span class="pcard back face-back">
+              <span class="hold-hint">Press and hold<br>to look</span>
+            </span>
+            <span id="cardFront" class="pcard face-front">
+              <span class="corner" id="cornerTL"></span>
+              <span class="front-body">
+                <span id="roleTitle" class="role-title"></span>
+                <span id="topicBox" class="topic"></span>
+              </span>
+              <span class="corner br" id="cornerBR"></span>
+            </span>
+          </span>
+        </button>
+        <p id="peekNote" class="hint">Cover your screen. Only you should see this.</p>
+
+        <div class="panel question">
+          <h2 id="question"></h2>
+          <p id="answerInstruction"></p>
+        </div>
+
+        <div class="panel order">
+          <div class="panel-head"><h2>Speaking order</h2></div>
+          <ol id="answerOrder" class="order-list"></ol>
+        </div>
+
+        <button id="readyBtn" class="btn primary">I've answered</button>
+        <div class="progress">
+          <div id="readyDots" class="dots" aria-hidden="true"></div>
+          <span id="answerProgress" class="hint"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- DISCUSSION -->
+    <section id="discussion" class="screen">
+      <header class="bar"><span class="mark">Discussion</span><span class="pill">Round <span id="discRound"></span></span></header>
+      <div class="col">
+        <div class="timer" id="timerWrap">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="track" cx="100" cy="100" r="88"/>
+            <circle class="ring" id="timerRing" cx="100" cy="100" r="88"/>
+          </svg>
+          <div class="timer-num"><span id="discussionTimer">60</span><small>seconds</small></div>
+        </div>
+        <h1 class="h-screen">Who's faking it?</h1>
+        <p class="lede center">Ask follow-up questions. Look for the answer that was a little too vague.</p>
+        <button id="peekBtn" class="btn ghost small">Hold to check your card</button>
+        <div id="peekOut" class="peek-out" aria-live="polite"></div>
+        <button id="discussionDoneBtn" class="btn primary">Start voting now</button>
+        <p id="discHint" class="hint"></p>
+      </div>
+    </section>
+
+    <!-- VOTING -->
+    <section id="voting" class="screen">
+      <header class="bar"><span class="mark">Secret vote</span><span class="pill">Round <span id="voteRound"></span></span></header>
+      <div class="col">
+        <h1 class="h-screen">Who's the impostor?</h1>
+        <p class="lede center">Votes stay hidden until everyone has voted.</p>
+        <div id="voteList" class="vote-grid"></div>
+        <button id="lockVoteBtn" class="btn primary" disabled>Pick a player</button>
+        <p id="voteStatus" class="hint"></p>
+      </div>
+    </section>
+
+    <!-- REVEAL -->
+    <section id="reveal" class="screen">
+      <header class="bar"><span class="mark">The reveal</span><span class="pill">Round <span id="revealRound"></span></span></header>
+      <div class="col">
+        <div class="reveal-stage">
+          <div id="revealCard" class="flip">
+            <div class="pcard back face-back"></div>
+            <div class="pcard face-front reveal-front">
+              <span id="revealAvatar" class="avatar xl"></span>
+              <span id="revealName" class="reveal-name"></span>
+              <span id="revealStamp" class="stamp"></span>
+            </div>
+          </div>
+        </div>
+        <h1 id="revealTitle" class="h-screen"></h1>
+        <p id="revealText" class="lede center"></p>
+        <p id="revealTopic" class="topic-line"></p>
+
+        <div id="guessBox" class="panel guess hidden">
+          <h2>One last chance</h2>
+          <p>You were caught. Name the secret topic to win 2 points.</p>
+          <div class="join-row">
+            <input id="guessInput" placeholder="Your guess" autocomplete="off" aria-label="Your guess">
+            <button id="guessBtn" class="btn primary">Guess</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>Scores</h2><span class="count" id="scoresRound"></span></div>
+          <div id="scores" class="score-list"></div>
+        </div>
+        <button id="nextBtn" class="btn primary">Next round</button>
+        <p id="nextHint" class="hint"></p>
+      </div>
+    </section>
+
+    <!-- GAME OVER -->
+    <section id="gameover" class="screen">
+      <header class="bar"><span class="mark">Final scores</span><span class="pill" id="roundsPlayed"></span></header>
+      <div class="col">
+        <h1 id="winnerTitle" class="title small"></h1>
+        <div id="podium" class="podium"></div>
+        <div class="panel">
+          <div id="finalScores" class="score-list"></div>
+        </div>
+        <button id="againBtn" class="btn primary">Play again</button>
+      </div>
+    </section>
+  </main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
